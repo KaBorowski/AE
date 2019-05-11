@@ -1,6 +1,6 @@
 clear;
 clear global;
-save = 1;
+save = 0;
 f = @(x, a, b)(1 - x(1) + a).^2 + 100*(x(2) - b - (x(1) - a).^2).^2;
 X0 = zeros(4,2);
 Xinf = zeros(4,2);
