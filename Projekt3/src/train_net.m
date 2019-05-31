@@ -5,7 +5,7 @@ save = false;
 imds = imageDatastore('../data/Training', ...
     'IncludeSubfolders',true, ...
     'LabelSource','foldernames'); 
-[imdsTrain,imdsValidation] = splitEachLabel(imds,0.9,'randomized');
+[imdsTrain,imdsValidation] = splitEachLabel(imds,0.8,'randomized');
 
 net = googlenet;
 
@@ -47,11 +47,11 @@ lgraph = replaceLayer(lgraph,classLayer.Name,newClassLayer);
 % analyzeNetwork(net);
 
 %% Freeze Initial Layers
-% layers = lgraph.Layers;
-% connections = lgraph.Connections;
-% 
-% layers(1:10) = freezeWeights(layers(1:10));
-% lgraph = createLgraphUsingConnections(layers,connections);
+layers = lgraph.Layers;
+connections = lgraph.Connections;
+
+layers(1:10) = freezeWeights(layers(1:10));
+lgraph = createLgraphUsingConnections(layers,connections);
 
 %% Train Network
 pixelRange = [-30 30];
@@ -76,7 +76,7 @@ miniBatchSize = 10;
 valFrequency = floor(numel(augimdsTrain.Files)/miniBatchSize);
 options = trainingOptions('sgdm', ...
     'MiniBatchSize',miniBatchSize, ...
-    'MaxEpochs',6, ...
+    'MaxEpochs',10, ...
     'InitialLearnRate',3e-4, ...
     'Shuffle','every-epoch', ...
     'ValidationData',augimdsValidation, ...
@@ -102,5 +102,5 @@ for i = 1:4
 end
 
 if save == true
-    matlab2tikz(strcat('../data/TrainNet/test2','.tex'), 'showInfo', false);
+    matlab2tikz(strcat('../data/TrainNetOptions/InitialLearnRate/test1','.tex'), 'showInfo', false);
 end

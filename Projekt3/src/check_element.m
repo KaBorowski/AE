@@ -1,7 +1,8 @@
 % clearvars -except net;
 clear;
 save = false;
-net = load('../data/my_net_default3.mat');
+netName = 'myNet_08_02';
+net = load(strcat('../data/Networks/', netName,'.mat'));
 net = net.net;
 classNames = net.Layers(end).ClassNames;
 
@@ -15,23 +16,27 @@ figure;
 hold on;
 photos_count = length(filename);
 col = ceil(sqrt(photos_count));
+row = col;
+if row*(col-1) >= photos_count
+    col = col-1;
+end
 for i=1:photos_count
     image = imread(filename{i});
     image = imresize(image,inputSize(1:2));
     [label,scores] = classify(net,image);
     chance = num2str(100*scores(classNames == label),3);
     element = string(label);
-    subplot(col,col,i);
+    subplot(row,col,i);
     imshow(image);
-    title(strcat("'",element,"'", ' Probability ='," ", num2str(chance), '%'));
+%     title(strcat("'",element,"'", ' Probability ='," ", num2str(chance), '%'), 'FontSize', 10);
+    title(strcat("'",element,"' ", num2str(chance), '%'), 'FontSize', 10);
     clearvars -except i filename net user_canceled inputSize classNames ...
-        save col photos_count
+        save col photos_count row netName
 end
 hold off;
 
 if save == true
-    [filepath,name,ext] = fileparts(filename{1});
-    matlab2tikz(strcat('../data/Tests/', name,'.tex'), 'showInfo', false);
+    matlab2tikz(strcat('../data/Tests/', netName,'.tex'), 'showInfo', false);
 end
 
 
