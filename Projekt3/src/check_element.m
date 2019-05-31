@@ -1,12 +1,13 @@
 % clearvars -except net;
 clear;
-net = load('../data/my_net.mat');
+save = false;
+net = load('../data/my_net_default3.mat');
 net = net.net;
 classNames = net.Layers(end).ClassNames;
 
 inputSize = net.Layers(1).InputSize;
 
-[filename,user_canceled] = imgetfile('InitialPath', '../data/tests', 'MultiSelect',true);
+[filename,user_canceled] = imgetfile('InitialPath', '../data/test_images', 'MultiSelect',true);
 if user_canceled == true
    return;
 end
@@ -22,9 +23,15 @@ for i=1:photos_count
     element = string(label);
     subplot(col,col,i);
     imshow(image);
-    title(strcat(element, ' chance = ', num2str(chance), '%'));
-    clearvars -except i filename net user_canceled inputSize classNames col photos_count
+    title(strcat("'",element,"'", ' Probability ='," ", num2str(chance), '%'));
+    clearvars -except i filename net user_canceled inputSize classNames ...
+        save col photos_count
 end
 hold off;
+
+if save == true
+    [filepath,name,ext] = fileparts(filename{1});
+    matlab2tikz(strcat('../data/Tests/', name,'.tex'), 'showInfo', false);
+end
 
 
